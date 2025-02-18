@@ -10,11 +10,13 @@ A static analysis tool that detects potentially dangerous channel operations in 
 ## Usage
 
 ```bash
+go build
+
 # Check specific file with text output
-./channelchecker -path=/path/to/file.go -output=txt
+./channelcheck -path=/path/to/file.go
 
 # Check specific directory with JSON output
-./channelchecker -path=/path/to/directory -output=json
+./channelcheck -path=/path/to/directory -output=json
 ```
 
 ## Example Output
