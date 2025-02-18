@@ -1,4 +1,3 @@
-// main.go
 package main
 
 import (
@@ -75,9 +74,9 @@ func main() {
         fset: token.NewFileSet(),
     }
 
-    err := analyzer.analyze(*path)
+    err := analyzer.analyzePath(*path)
     if err != nil {
-        log.Fatalf("Error analyzing path: %v", err)
+        log.Printf("Error analyzing path: %v\n", err)
     }
 
     switch outputFormat {
@@ -124,7 +123,7 @@ func printText(issues []Issue) {
     }
 }
 
-func (a *Analyzer) analyze(path string) error {
+func (a *Analyzer) analyzePath(path string) error {
 	fileInfo, err := os.Stat(path)
 	if err != nil {
 		return fmt.Errorf("error accessing path: %v", err)
@@ -145,13 +144,18 @@ func (a *Analyzer) analyze(path string) error {
 	return a.analyzeFile(path)
 }
 
+
 func (a *Analyzer) analyzeFile(path string) error {
 	// Parse the file
 	file, err := parser.ParseFile(a.fset, path, nil, parser.AllErrors)
 	if err != nil {
 		return fmt.Errorf("error parsing file %s: %v", path, err)
 	}
+	a.analyze(file)
+	return nil
+}
 
+func (a *Analyzer) analyze(file *ast.File) {
 	// Reset the stack for each file
 	a.stack = parentStack{}
 
@@ -176,8 +180,6 @@ func (a *Analyzer) analyzeFile(path string) error {
 		}
 		return true
 	})
-
-	return nil
 }
 
 func (a *Analyzer) checkChannelSend(node *ast.SendStmt) {
